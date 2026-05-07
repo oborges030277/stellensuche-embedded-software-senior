@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Konfiguration — Senior Embedded Software (Senden)</title>
+<style>
+:root {
+  --bg: #0a0a1a;
+  --card: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.1);
+  --text: #ffffff;
+  --text-dim: rgba(255,255,255,0.6);
+  --accent: #4a9eff;
+  --green: #00d68f;
+  --red: #ff6b6b;
+  --yellow: #ffc107;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0a0a1a 100%);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 1em;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 960px; margin: 0 auto; }
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1em; margin-bottom: 1em; flex-wrap: wrap;
+}
+h1 { font-size: 1.4em; }
+h2 { font-size: 1.1em; margin: 1.5em 0 0.5em; color: var(--accent); }
+h3 { font-size: 0.9em; margin: 0.8em 0 0.4em; color: var(--text-dim); font-weight: 500; }
+p.lead { color: var(--text-dim); margin-bottom: 0.8em; }
+.back-link {
+  display: inline-block; padding: 0.5em 1em; background: var(--card);
+  border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); text-decoration: none; font-size: 0.85em;
+}
+.back-link:hover { background: rgba(255,255,255,0.08); }
+.section {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 1em 1.2em; margin-bottom: 0.8em;
+}
+ul { padding-left: 1.4em; color: var(--text-dim); font-size: 0.9em; }
+ul li { margin: 0.15em 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.3em; }
+.chip {
+  display: inline-block; padding: 3px 10px; border-radius: 12px;
+  font-size: 0.78em; font-weight: 600; letter-spacing: 0.01em;
+}
+.chip-include { background: rgba(74,158,255,0.18); color: #b3d4ff; border: 1px solid rgba(74,158,255,0.3); }
+.chip-exclude { background: rgba(255,107,107,0.15); color: #ffb3b3; border: 1px solid rgba(255,107,107,0.3); }
+.chip-highlight { background: var(--green); color: #0a1410; }
+.empty { color: var(--text-dim); font-size: 0.85em; font-style: italic; }
+.source-card {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.8em; margin: 0.4em 0;
+}
+.source-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5em; flex-wrap: wrap; }
+.source-head strong { font-size: 0.95em; }
+.source-head .flags { font-size: 0.7em; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+.source-parser { font-size: 0.75em; color: var(--text-dim); margin: 0.2em 0; }
+.source-parser code { background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 4px; }
+.source-link { color: var(--accent); text-decoration: none; }
+.source-link:hover { color: var(--accent-hover, #6bb3ff); text-decoration: underline; }
+.extra-urls { color: var(--text-dim); font-size: 0.75em; font-weight: 400; margin-left: 0.4em; }
+.meta-table { width: 100%; font-size: 0.85em; border-collapse: collapse; }
+.meta-table th {
+  text-align: left; color: var(--text-dim); padding: 0.3em 0.8em 0.3em 0;
+  font-weight: 500; white-space: nowrap; width: 1%;
+}
+.meta-table td { padding: 0.3em 0; }
+.badge-on { color: var(--green); font-weight: 600; }
+.badge-off { color: var(--text-dim); }
+.note { color: var(--text-dim); font-size: 0.78em; font-style: italic; margin-top: 0.3em; }
+footer { color: var(--text-dim); font-size: 0.75em; margin-top: 2em; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <div>
+    <h1>Konfiguration — Senior Embedded Software (Senden)</h1>
+    <p class="lead">Senior Embedded Softwareentwickler / Software-Architekt / Teamleiter Embedded im Muensterland / 100% Remote (Vollzeit, min. 3 Tage Home-Office)</p>
+  </div>
+  <a href="index.html" class="back-link">&larr; zurueck zu den Ergebnissen</a>
+</header>
+
+<div class="section">
+  <h2>Standort &amp; Radius</h2>
+  <table class="meta-table"><tr><th>Heimat-Adresse</th><td>Senden, 48308 Senden (Westfalen)</td></tr><tr><th>Zentrum</th><td>Senden (Westfalen)</td></tr><tr><th>Radius (Kern)</th><td>30 km</td></tr><tr><th>Radius (erweitert)</th><td>50 km</td></tr><tr><th>Remote</th><td>Ja, mind. 3 Tage Home-Office; 100% Remote ist Highlight</td></tr></table><h3>Orte im Kernbereich</h3><div class="chips"><span class="chip chip-include">Senden</span><span class="chip chip-include">Muenster</span><span class="chip chip-include">Luedinghausen</span><span class="chip chip-include">Duelmen</span><span class="chip chip-include">Coesfeld</span><span class="chip chip-include">Ascheberg</span><span class="chip chip-include">Olfen</span><span class="chip chip-include">Nordkirchen</span><span class="chip chip-include">Selm</span><span class="chip chip-include">Werne</span><span class="chip chip-include">Beckum</span><span class="chip chip-include">Hamm</span><span class="chip chip-include">Bottrop</span><span class="chip chip-include">Recklinghausen</span></div><h3>Ausgeschlossene Orte</h3><p class="empty">—</p>
+</div>
+
+<div class="section">
+  <h2>Suchbegriffe</h2>
+  <div class="chips"><span class="chip chip-include">Embedded Software Engineer</span><span class="chip chip-include">Embedded Softwareentwickler</span><span class="chip chip-include">Embedded Softwareentwicklerin</span><span class="chip chip-include">Senior Embedded</span><span class="chip chip-include">Embedded Developer</span><span class="chip chip-include">Embedded Systems Engineer</span><span class="chip chip-include">Firmware Engineer</span><span class="chip chip-include">Firmware Entwickler</span><span class="chip chip-include">Mikrocontroller Software</span><span class="chip chip-include">Embedded C</span><span class="chip chip-include">Embedded C++</span><span class="chip chip-include">Embedded Software Architect</span><span class="chip chip-include">Software-Architekt Embedded</span><span class="chip chip-include">Software Architekt Embedded</span><span class="chip chip-include">Lead Software Architect Embedded</span><span class="chip chip-include">Embedded Architect</span><span class="chip chip-include">Teamleiter Embedded</span><span class="chip chip-include">Lead Embedded</span><span class="chip chip-include">Lead Embedded Engineer</span><span class="chip chip-include">Head of Embedded</span><span class="chip chip-include">Engineering Manager Embedded</span><span class="chip chip-include">Embedded Team Lead</span><span class="chip chip-include">Embedded Software Lead</span></div>
+</div>
+
+<div class="section">
+  <h2>Filter — Titel muss enthalten</h2>
+  <div class="chips"><span class="chip chip-include">Embedded</span><span class="chip chip-include">Firmware</span><span class="chip chip-include">Mikrocontroller</span><span class="chip chip-include">Microcontroller</span></div>
+</div>
+
+<div class="section">
+  <h2>Filter — Titel darf nicht enthalten</h2>
+  <div class="chips"><span class="chip chip-exclude">Ausbildung</span><span class="chip chip-exclude">Auszubildende</span><span class="chip chip-exclude">Auszubildender</span><span class="chip chip-exclude">Azubi</span><span class="chip chip-exclude">Praktikum</span><span class="chip chip-exclude">Praktikant</span><span class="chip chip-exclude">Werkstudent</span><span class="chip chip-exclude">Werkstudentin</span><span class="chip chip-exclude">Trainee</span><span class="chip chip-exclude">Junior</span><span class="chip chip-exclude">duales Studium</span><span class="chip chip-exclude">duale Studentin</span><span class="chip chip-exclude">Dualer Student</span><span class="chip chip-exclude">Studierende</span><span class="chip chip-exclude">Hardware-Entwickler</span><span class="chip chip-exclude">Hardwareentwickler</span><span class="chip chip-exclude">Hardware Engineer</span><span class="chip chip-exclude">PCB-Designer</span><span class="chip chip-exclude">PCB Layouter</span><span class="chip chip-exclude">FPGA-Entwickler</span><span class="chip chip-exclude">FPGA Engineer</span><span class="chip chip-exclude">ASIC Engineer</span><span class="chip chip-exclude">Frontend Developer</span><span class="chip chip-exclude">Frontend-Entwickler</span><span class="chip chip-exclude">React Developer</span><span class="chip chip-exclude">Angular Developer</span><span class="chip chip-exclude">Vue Developer</span><span class="chip chip-exclude">Java EE</span><span class="chip chip-exclude">Java-EE</span><span class="chip chip-exclude">.NET Developer</span><span class="chip chip-exclude">ASP.NET</span><span class="chip chip-exclude">Drupal</span><span class="chip chip-exclude">TYPO3</span><span class="chip chip-exclude">Wordpress</span><span class="chip chip-exclude">Personalvermittlung</span><span class="chip chip-exclude">Personaldienstleistung</span><span class="chip chip-exclude">Personaldienstleistungen</span><span class="chip chip-exclude">Personalleasing</span><span class="chip chip-exclude">Personalverleih</span><span class="chip chip-exclude">Zeitarbeit</span><span class="chip chip-exclude">Zeitpersonal</span><span class="chip chip-exclude">Leiharbeit</span><span class="chip chip-exclude">Fachpersonal</span><span class="chip chip-exclude">Personalservice</span><span class="chip chip-exclude">Ueberlassung</span><span class="chip chip-exclude">Überlassung</span></div>
+</div>
+
+<div class="section">
+  <h2>Filter — Beschreibung darf nicht enthalten</h2>
+  <div class="chips"><span class="chip chip-exclude">Zeitarbeit</span><span class="chip chip-exclude">Arbeitnehmerueberlassung</span><span class="chip chip-exclude">Arbeitnehmerüberlassung</span><span class="chip chip-exclude">Leiharbeit</span><span class="chip chip-exclude">Leiharbeiter</span><span class="chip chip-exclude">AÜG</span><span class="chip chip-exclude">AUeG</span><span class="chip chip-exclude">ANÜ</span><span class="chip chip-exclude">ANUe</span><span class="chip chip-exclude">Personaldienstleister</span><span class="chip chip-exclude">im Rahmen der Arbeitnehmerueberlassung</span><span class="chip chip-exclude">im Rahmen der Arbeitnehmerüberlassung</span><span class="chip chip-exclude">iGZ</span><span class="chip chip-exclude">BAP</span><span class="chip chip-exclude">GVP</span><span class="chip chip-exclude">Tarifvertrag iGZ</span><span class="chip chip-exclude">Tarifvertrag BAP</span><span class="chip chip-exclude">Erlaubnis nach AÜG</span><span class="chip chip-exclude">Erlaubnis zur Arbeitnehmerueberlassung</span><span class="chip chip-exclude">Erlaubnis zur Arbeitnehmerüberlassung</span></div>
+</div>
+
+<div class="section">
+  <h2>Arbeitsstunden-Filter</h2>
+  <p>Status: <span class="badge-on">aktiv</span> · Mindeststunden pro Woche: <strong>35.0 h</strong></p>
+</div>
+
+<div class="section">
+  <h2>Highlight-Begriffe</h2>
+  <p class="note">Stellen mit diesen Begriffen werden auf der Ergebnis-Seite hervorgehoben und nach oben sortiert.</p>
+  <div class="chips"><span class="chip chip-highlight">100% Remote</span><span class="chip chip-highlight">100 % Remote</span><span class="chip chip-highlight">Vollremote</span><span class="chip chip-highlight">Voll-Remote</span><span class="chip chip-highlight">Remote-First</span><span class="chip chip-highlight">Remote First</span><span class="chip chip-highlight">fully remote</span><span class="chip chip-highlight">100% Home-Office</span><span class="chip chip-highlight">100 % Home-Office</span><span class="chip chip-highlight">Home-Office moeglich</span><span class="chip chip-highlight">Home Office moeglich</span><span class="chip chip-highlight">Mobile Work</span><span class="chip chip-highlight">Mobile Working</span><span class="chip chip-highlight">AUTOSAR</span><span class="chip chip-highlight">FreeRTOS</span><span class="chip chip-highlight">Yocto</span><span class="chip chip-highlight">Linux Embedded</span><span class="chip chip-highlight">Modern C++</span><span class="chip chip-highlight">Rust</span></div>
+</div>
+
+<div class="section">
+  <h2>Quellen (aktive)</h2>
+  <p class="note">Der Name jeder Quelle ist ein klickbarer Link auf das Job-Portal.
+     URLs werden von bekannten API-Keys bereinigt. POST-Body-Inhalte werden nicht angezeigt.</p>
+  <div class="source-card"><div class="source-head"><strong><a class="source-link" href="https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v4/jobs?was=Embedded+Software+Engineer&amp;wo=Senden+%28Westfalen%29&amp;umkreis=100&amp;angebotsart=1&amp;page=1&amp;size=50&amp;pav=false" target="_blank" rel="noopener noreferrer">Bundesagentur fuer Arbeit (Embedded Senior, Senden 100km)</a></strong> <span class="extra-urls">(+10 weitere URLs)</span><span class="flags">GET</span></div><div class="source-parser">Parser: <code>arbeitsagentur</code></div></div>
+<div class="source-card"><div class="source-head"><strong><a class="source-link" href="https://api.karriere.nrw/v1.0/stellenausschreibungen/" target="_blank" rel="noopener noreferrer">Karriere.NRW (oeffentliche Stellen NRW)</a></strong><span class="flags">GET</span></div><div class="source-parser">Parser: <code>karriere_nrw</code></div></div>
+<div class="source-card"><div class="source-head"><strong><a class="source-link" href="https://www.stepstone.de/jobs/embedded-software-engineer/in-muenster?radius=50" target="_blank" rel="noopener noreferrer">StepStone DE (Embedded Senior, Muenster 50km)</a></strong> <span class="extra-urls">(+5 weitere URLs)</span><span class="flags">GET · Browser</span></div><div class="source-parser">Parser: <code>stepstone</code></div></div>
+<div class="source-card"><div class="source-head"><strong><a class="source-link" href="https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=Embedded+Software+Engineer&amp;location=Muenster&amp;start=0" target="_blank" rel="noopener noreferrer">LinkedIn Jobs (Guest API, Embedded Senior)</a></strong> <span class="extra-urls">(+5 weitere URLs)</span><span class="flags">GET</span></div><div class="source-parser">Parser: <code>linkedin</code></div></div>
+<div class="source-card"><div class="source-head"><strong><a class="source-link" href="https://www.aachener-jobanzeiger.de/suche/?q=Embedded" target="_blank" rel="noopener noreferrer">Aachener Jobanzeiger (Embedded)</a></strong> <span class="extra-urls">(+2 weitere URLs)</span><span class="flags">GET</span></div><div class="source-parser">Parser: <code>regio_jobanzeiger</code></div></div>
+<div class="source-card"><div class="source-head"><strong><a class="source-link" href="https://jobsnrw.de/jobs?geo_location=48308&amp;lon=7.491457100000001&amp;lat=51.8573969&amp;radius=50&amp;locationType=postal_code&amp;location=Senden&amp;country=Deutschland&amp;postal_code=48308" target="_blank" rel="noopener noreferrer">Jobs NRW (Senden 50km)</a></strong><span class="flags">GET</span></div><div class="source-parser">Parser: <code>regio_jobanzeiger</code></div></div>
+<div class="source-card"><div class="source-head"><strong><a class="source-link" href="https://jobs.aachener-zeitung.de/stellenangebote/aachen" target="_blank" rel="noopener noreferrer">Aachener Zeitung Stellenmarkt</a></strong><span class="flags">GET</span></div><div class="source-parser">Parser: <code>aachener_zeitung</code></div></div>
+</div>
+
+<footer>Read-only Konfiguration &middot; Aktualisiert mit der Ergebnis-Seite</footer>
+</div>
+</body>
+</html>

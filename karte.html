@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stellensuche Karte &mdash; embedded_software_senior</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  :root {
+    --bg: #0a0a1a;
+    --panel: rgba(255,255,255,0.08);
+    --border: rgba(255,255,255,0.15);
+    --accent: #4a9eff;
+    --text: #fff;
+    --text-dim: rgba(255,255,255,0.6);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    padding: 0.8em 1em;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6em;
+  }
+  header h1 { font-size: 1.1em; }
+  header .meta { color: var(--text-dim); font-size: 0.85em; }
+  header a.back {
+    color: var(--accent);
+    text-decoration: none;
+    padding: 6px 12px;
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    font-size: 0.85em;
+  }
+  header a.back:hover { background: rgba(74,158,255,0.15); }
+  #map { flex: 1; }
+  .leaflet-popup-content-wrapper {
+    background: #1a1a2e;
+    color: var(--text);
+    border-radius: 8px;
+  }
+  .leaflet-popup-tip { background: #1a1a2e; }
+  .leaflet-popup-content a { color: var(--accent); }
+  .popup-title { font-weight: 600; margin-bottom: 4px; }
+  .popup-title.popup-dismissed { text-decoration: line-through; opacity: 0.6; }
+  .popup-title.popup-dismissed .dismissed-hint { color: var(--red); font-size: 0.8em; font-weight: 500; }
+  .popup-company { color: var(--text-dim); font-size: 0.85em; margin-bottom: 4px; }
+  .popup-loc { color: var(--text-dim); font-size: 0.8em; margin-bottom: 6px; }
+  .home-marker {
+    background: #e63946;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 0 4px rgba(230,57,70,0.4), 0 4px 12px rgba(0,0,0,0.5);
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Stellensuche Karte &mdash; embedded_software_senior</h1>
+    <div class="meta">11 von 12 Stellen auf Karte &middot; 1 ohne Koord. &middot; Gebaut: 07.05.2026 22:58</div>
+  </div>
+  <a href="index.html" class="back">&larr; Zur Liste</a>
+</header>
+<div id="map"></div>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var markers = [{"lat": 52.05, "lon": 7.4667, "title": "Embedded-Softwareentwickler (m/w/d)", "company": "JÜKE Systemtechnik GmbH", "location": "48341 Altenberge, Westfalen", "url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/12288-4773445540-S", "source": "arbeitsagentur", "dismissed": false}, {"lat": 52.05, "lon": 7.4667, "title": "Embedded-Softwareentwickler (m/w/d)", "company": "JÜKE Systemtechnik GmbH", "location": "48341 Altenberge, Westfalen", "url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/12781-16227039-KAL-S", "source": "arbeitsagentur", "dismissed": false}, {"lat": 51.444, "lon": 7.4546, "title": "DevOps | CI/CD Engineer* Embedded & IoT", "company": "Smart Mechatronics (Dortmund) GmbH", "location": "44227 Dortmund", "url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1002861400-S", "source": "arbeitsagentur", "dismissed": false}, {"lat": 51.444, "lon": 7.4546, "title": "Senior Engineer* Embedded Security", "company": "Smart Mechatronics (Dortmund) GmbH", "location": "44227 Dortmund", "url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1001605755-S", "source": "arbeitsagentur", "dismissed": false}, {"lat": 51.5097, "lon": 7.4601, "title": "Engineer* (m/w/d) Embedded Software | C++, Linux, Zephyr", "company": "Smart Mechatronics", "location": "44137 Dortmund", "url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/13644-306042-S", "source": "arbeitsagentur", "dismissed": false}, {"lat": 51.4967, "lon": 7.1136, "title": "*SB* Embedded Software Engineer Java Card (m/w/d)(544763)", "company": "Eviden Germany GmbH", "location": "45886 Gelsenkirchen", "url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1002791978-S", "source": "arbeitsagentur", "dismissed": false}, {"lat": 51.444, "lon": 7.4546, "title": "Engineer* Embedded Software | C++, Linux, Zephyr", "company": "Smart Mechatronics (Dortmund) GmbH", "location": "44227 Dortmund", "url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1002608102-S", "source": "arbeitsagentur", "dismissed": false}, {"lat": 51.5133, "lon": 7.9494, "title": "Embedded Softwareentwickler (m/w/d)", "company": "INOTEC Sicherheitstechnik GmbH", "location": "59469 Ense", "url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/12287-JOB-821220-S", "source": "arbeitsagentur", "dismissed": false}, {"lat": 51.5133, "lon": 7.9494, "title": "Embedded Softwareentwickler Schwerpunkt: Ladetechnik (m/w...", "company": "INOTEC Sicherheitstechnik GmbH", "location": "59469 Ense", "url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/12287-JOB-821222-S", "source": "arbeitsagentur", "dismissed": false}, {"lat": 51.5, "lon": 7.6333, "title": "Embedded Softwareentwickler (m/w/d) elektronische Messgeräte", "company": "grey engineering GmbH", "location": "59439 Holzwickede", "url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1000273460-S", "source": "arbeitsagentur", "dismissed": false}, {"lat": 52.0402, "lon": 7.8423, "title": "Senior Softwareentwickler Embedded Systems / C/C++ (m/w/d)", "company": "FRIWO Gerätebau GmbH", "location": "48346 Ostbevern", "url": "https://www.arbeitsagentur.de/jobsuche/jobdetail/10000-1205234328-S", "source": "arbeitsagentur", "dismissed": false}];
+var homeLat = 51.8564;
+var homeLon = 7.4833;
+var radiusM = 30000;
+var radius2M = 50000;
+var map = L.map('map').setView([51.8564, 7.4833], 9);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+if (homeLat !== null && homeLon !== null) {
+  // Radius-Ringe ZUERST (damit Marker darueber liegt)
+  if (radius2M !== null) {
+    L.circle([homeLat, homeLon], {
+      radius: radius2M,
+      color: '#ffc107', weight: 2, opacity: 0.6,
+      fillColor: '#ffc107', fillOpacity: 0.04,
+      interactive: false
+    }).addTo(map).bindTooltip('50 km (Warnradius)', {permanent:false});
+  }
+  if (radiusM !== null) {
+    L.circle([homeLat, homeLon], {
+      radius: radiusM,
+      color: '#00d68f', weight: 2, opacity: 0.7,
+      fillColor: '#00d68f', fillOpacity: 0.06,
+      interactive: false
+    }).addTo(map).bindTooltip('30 km (Trefferradius)', {permanent:false});
+  }
+  L.marker([homeLat, homeLon], {
+    icon: L.divIcon({
+      html: '<div class="home-marker">&#127968;</div>',
+      className: '',
+      iconSize: [36, 36],
+      iconAnchor: [18, 18]
+    }),
+    zIndexOffset: 1000
+  }).addTo(map).bindPopup('<b>Heimatadresse</b>').openPopup();
+}
+markers.forEach(function(m) {
+  var titleCls = m.dismissed ? 'popup-title popup-dismissed' : 'popup-title';
+  var popup = '<div class="' + titleCls + '">' + m.title
+            + (m.dismissed ? ' <span class="dismissed-hint">(aussortiert)</span>' : '')
+            + '</div>'
+            + '<div class="popup-company">' + m.company + '</div>'
+            + '<div class="popup-loc">' + m.location + ' &middot; ' + m.source + '</div>'
+            + '<a href="' + m.url + '" target="_blank">Stellenanzeige &rarr;</a>';
+  L.marker([m.lat, m.lon], {opacity: m.dismissed ? 0.4 : 1.0}).addTo(map).bindPopup(popup);
+});
+</script>
+</body>
+</html>

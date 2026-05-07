@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stellensuche &mdash; embedded_software_senior</title>
+<style>
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --accent: #4a9eff;
+  --accent-hover: #6bb3ff;
+  --green: #00d68f;
+  --red: #ff4444;
+  --yellow: #ffc107;
+  /* 3-Stufen-Rating */
+  --rating-green: #00d68f;
+  --rating-yellow: #ffc107;
+  --rating-red: #ff4444;
+  --text: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.35);
+  --transition: 0.3s ease;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0a0a1a 100%);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  padding: 1em;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+.container { max-width: 960px; margin: 0 auto; }
+
+h1 { font-size: 1.4em; font-weight: 700; margin-bottom: 0.3em; }
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  margin-bottom: 1em;
+}
+
+.meta { color: var(--text-dim); font-size: 0.85em; }
+
+.build-info {
+  color: var(--text-muted);
+  font-size: 0.75em;
+  margin-top: -0.2em;
+  margin-bottom: 0.8em;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  margin-bottom: 1em;
+}
+
+.map-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  background: rgba(74,158,255,0.15);
+  border: 1px solid rgba(74,158,255,0.4);
+  color: var(--accent);
+  padding: 10px 16px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9em;
+  transition: all var(--transition);
+}
+
+.map-btn:hover {
+  background: rgba(74,158,255,0.25);
+  color: var(--accent-hover);
+}
+
+.map-btn .ic { font-size: 1.15em; }
+
+.sync-status {
+  font-size: 0.75em;
+  color: var(--text-muted);
+  align-self: center;
+  padding: 0 4px;
+}
+.sync-status.ok { color: var(--green); }
+.sync-status.busy { color: var(--yellow); }
+.sync-status.err { color: var(--red); }
+
+/* Filter toolbar */
+.toolbar {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.toolbar .tb {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-dim);
+  font-size: 0.75em;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.toolbar .tb:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+}
+
+.toolbar .tb.active {
+  background: rgba(74, 158, 255, 0.2);
+  border-color: rgba(74, 158, 255, 0.4);
+  color: var(--accent);
+}
+
+.source-group { margin-bottom: 1.5em; }
+
+.source-group h2 {
+  font-size: 1em;
+  font-weight: 600;
+  color: var(--accent);
+  padding: 0.4em 0;
+  border-bottom: 1px solid var(--glass-border);
+  margin-bottom: 0.4em;
+}
+
+.source-group h2 .count { color: var(--text-muted); font-weight: 400; }
+
+/* Job row — works on desktop and mobile */
+.job-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 3px 0;
+  background: var(--glass-bg);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition: all var(--transition);
+}
+
+.job-row:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--glass-border);
+}
+
+.job-row.highlight {
+  border-left: 3px solid var(--green);
+  background: rgba(0, 214, 143, 0.08);
+}
+
+.job-row.highlight:hover {
+  background: rgba(0, 214, 143, 0.14);
+}
+
+.highlight-badge {
+  display: inline-block;
+  margin-left: 0.6em;
+  padding: 1px 8px;
+  background: var(--green);
+  color: #0a1410;
+  font-size: 0.68em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-radius: 10px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* 3-Stufen-Rating: Rahmen-Farbe links + Opacity-Abschwaechung fuer dismissed */
+.job-row.rating-favorite {
+  border-left: 3px solid var(--rating-green);
+}
+.job-row.rating-compromise {
+  border-left: 3px solid var(--rating-yellow);
+}
+.job-row.rating-dismissed {
+  border-left: 3px solid var(--rating-red);
+  opacity: 0.45;
+}
+.job-row.rating-dismissed .job-title {
+  text-decoration: line-through;
+}
+
+
+.hidden { display: none; }
+
+.job-link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  color: var(--text);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.job-link:hover { color: var(--accent-hover); }
+
+.job-title {
+  font-weight: 600;
+  font-size: 0.9em;
+  line-height: 1.3;
+  /* Allow wrapping on mobile */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.job-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  font-size: 0.75em;
+  color: var(--text-dim);
+  flex-wrap: wrap;
+}
+
+.job-loc { color: var(--text-muted); }
+
+.job-date { color: var(--text-muted); }
+
+.warn { color: var(--red); font-size: 0.85em; font-weight: 600; }
+
+/* Action buttons — always visible, touch-friendly */
+.job-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: 4px 6px;
+}
+
+.btn-action {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.1em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .btn-action:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  .btn-dismiss:hover {
+    color: var(--red);
+    border-color: rgba(255, 68, 68, 0.4);
+    background: rgba(255, 68, 68, 0.15);
+  }
+}
+
+.btn-action:active {
+  transform: scale(0.9);
+}
+
+.btn-fav.active {
+  color: var(--yellow);
+  border-color: rgba(255, 193, 7, 0.4);
+  background: rgba(255, 193, 7, 0.15);
+}
+
+/* 3-Stufen-Rating Buttons (thumbs up/side/down) */
+.btn-rating {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+}
+.btn-rating .icon {
+  width: 18px;
+  height: 18px;
+}
+.btn-rating:active { transform: scale(0.9); }
+@media (hover: hover) {
+  .btn-rating-favorite:hover {
+    color: var(--rating-green);
+    border-color: rgba(0, 214, 143, 0.45);
+    background: rgba(0, 214, 143, 0.12);
+  }
+  .btn-rating-compromise:hover {
+    color: var(--rating-yellow);
+    border-color: rgba(255, 193, 7, 0.45);
+    background: rgba(255, 193, 7, 0.12);
+  }
+  .btn-rating-dismissed:hover {
+    color: var(--rating-red);
+    border-color: rgba(255, 68, 68, 0.45);
+    background: rgba(255, 68, 68, 0.12);
+  }
+}
+.btn-rating-favorite.active {
+  color: var(--rating-green);
+  border-color: rgba(0, 214, 143, 0.55);
+  background: rgba(0, 214, 143, 0.2);
+}
+.btn-rating-compromise.active {
+  color: var(--rating-yellow);
+  border-color: rgba(255, 193, 7, 0.55);
+  background: rgba(255, 193, 7, 0.2);
+}
+.btn-rating-dismissed.active {
+  color: var(--rating-red);
+  border-color: rgba(255, 68, 68, 0.55);
+  background: rgba(255, 68, 68, 0.2);
+}
+
+/* Farbige Toggle-Filter-Buttons (rating-spezifisch) */
+.toolbar .tb.tb-favorite { color: var(--rating-green); border-color: rgba(0, 214, 143, 0.3); }
+.toolbar .tb.tb-compromise { color: var(--rating-yellow); border-color: rgba(255, 193, 7, 0.3); }
+.toolbar .tb.tb-dismissed { color: var(--rating-red); border-color: rgba(255, 68, 68, 0.3); }
+.toolbar .tb.toggle-off {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+.toolbar .tb .icon { width: 14px; height: 14px; vertical-align: middle; }
+
+.btn-maps {
+  font-size: 0.9em;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.container { animation: fadeIn 0.4s ease forwards; }
+
+/* Desktop: title on one line */
+@media (min-width: 641px) {
+  .job-link {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
+  }
+  .job-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+  }
+  .job-meta {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
+  .job-actions {
+    flex-direction: row;
+    gap: 3px;
+    padding: 4px 8px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Stellensuche &mdash; embedded_software_senior</h1>
+<div class="build-info">Gebaut: 07.05.2026 22:58 · Daten: 0.2 h alt</div>
+<div class="header-buttons">
+  <a href="karte.html" class="map-btn"><span class="ic">&#128506;</span> Karte mit allen Stellen</a>
+  <a href="config.html" class="map-btn"><span class="ic">&#9881;</span> Konfiguration</a>
+</div>
+<div class="header-row">
+  <span class="meta">12 Treffer</span>
+  <div class="toolbar">
+    <button class="tb" onclick="toggleFilter('unmarked')" id="tf-unmarked"
+            title="Unmarkierte Stellen zeigen/verbergen">Unmarkiert</button>
+    <button class="tb tb-favorite" onclick="toggleFilter('favorite')" id="tf-favorite"
+            title="Favoriten zeigen/verbergen">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-favorite"/></svg> Favoriten
+    </button>
+    <button class="tb tb-compromise" onclick="toggleFilter('compromise')" id="tf-compromise"
+            title="Kompromisse zeigen/verbergen">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <use href="#rating-compromise"/>
+      </svg> Kompromiss
+    </button>
+    <button class="tb tb-dismissed" onclick="toggleFilter('dismissed')" id="tf-dismissed"
+            title="Aussortierte zeigen/verbergen">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <use href="#rating-dismissed"/>
+      </svg> Aussortiert
+    </button>
+    <button class="tb" onclick="setupGistSync()" id="tb-sync"
+            title="Markierungen mit GitHub Gist synchronisieren">↻ Sync</button>
+    <span id="sync-status" class="sync-status"></span>
+  </div>
+</div>
+<div class="source-group"><h2>arbeitsagentur <span class="count">(12)</span></h2><div class="job-row" id="job-4c413109b098" data-rating=""><a href="https://www.arbeitsagentur.de/jobsuche/jobdetail/12288-4773445540-S" target="_blank" class="job-link"><span class="job-title">1) Embedded-Softwareentwickler (m/w/d)</span><span class="job-meta"><span class="job-company">JÜKE Systemtechnik GmbH</span><span class="job-loc">48341 Altenberge, Westfalen (22 km)</span><span class="job-date">07.05.</span></span></a><div class="job-actions"><button class="btn-rating btn-rating-favorite" onclick="setRating(this,'4c413109b098','favorite')" title="Sehr gut geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-favorite"/></svg></button><button class="btn-rating btn-rating-compromise" onclick="setRating(this,'4c413109b098','compromise')" title="Ok, mit Einschraenkungen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-compromise"/></svg></button><button class="btn-rating btn-rating-dismissed" onclick="setRating(this,'4c413109b098','dismissed')" title="Nicht geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-dismissed"/></svg></button><button class="btn-action btn-maps" onclick="openMaps('48341 Altenberge, Westfalen')" title="Route in Google Maps">🗺</button></div></div>
+<div class="job-row" id="job-8a9886145b51" data-rating=""><a href="https://www.arbeitsagentur.de/jobsuche/jobdetail/12781-16227039-KAL-S" target="_blank" class="job-link"><span class="job-title">2) Embedded-Softwareentwickler (m/w/d)</span><span class="job-meta"><span class="job-company">JÜKE Systemtechnik GmbH</span><span class="job-loc">48341 Altenberge, Westfalen (22 km)</span><span class="job-date">07.05.</span></span></a><div class="job-actions"><button class="btn-rating btn-rating-favorite" onclick="setRating(this,'8a9886145b51','favorite')" title="Sehr gut geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-favorite"/></svg></button><button class="btn-rating btn-rating-compromise" onclick="setRating(this,'8a9886145b51','compromise')" title="Ok, mit Einschraenkungen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-compromise"/></svg></button><button class="btn-rating btn-rating-dismissed" onclick="setRating(this,'8a9886145b51','dismissed')" title="Nicht geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-dismissed"/></svg></button><button class="btn-action btn-maps" onclick="openMaps('48341 Altenberge, Westfalen')" title="Route in Google Maps">🗺</button></div></div>
+<div class="job-row" id="job-3ad8d360858f" data-rating=""><a href="https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1002861400-S" target="_blank" class="job-link"><span class="job-title">3) DevOps | CI/CD Engineer* Embedded &amp; IoT</span><span class="job-meta"><span class="job-company">Smart Mechatronics (Dortmund) GmbH</span><span class="job-loc">44227 Dortmund (46 km)</span><span class="job-date">07.05.</span></span></a><div class="job-actions"><button class="btn-rating btn-rating-favorite" onclick="setRating(this,'3ad8d360858f','favorite')" title="Sehr gut geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-favorite"/></svg></button><button class="btn-rating btn-rating-compromise" onclick="setRating(this,'3ad8d360858f','compromise')" title="Ok, mit Einschraenkungen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-compromise"/></svg></button><button class="btn-rating btn-rating-dismissed" onclick="setRating(this,'3ad8d360858f','dismissed')" title="Nicht geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-dismissed"/></svg></button><button class="btn-action btn-maps" onclick="openMaps('44227 Dortmund')" title="Route in Google Maps">🗺</button></div></div>
+<div class="job-row" id="job-2c654696a161" data-rating=""><a href="https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1001605755-S" target="_blank" class="job-link"><span class="job-title">4) Senior Engineer* Embedded Security</span><span class="job-meta"><span class="job-company">Smart Mechatronics (Dortmund) GmbH</span><span class="job-loc">44227 Dortmund (46 km)</span><span class="job-date">07.05.</span></span></a><div class="job-actions"><button class="btn-rating btn-rating-favorite" onclick="setRating(this,'2c654696a161','favorite')" title="Sehr gut geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-favorite"/></svg></button><button class="btn-rating btn-rating-compromise" onclick="setRating(this,'2c654696a161','compromise')" title="Ok, mit Einschraenkungen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-compromise"/></svg></button><button class="btn-rating btn-rating-dismissed" onclick="setRating(this,'2c654696a161','dismissed')" title="Nicht geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-dismissed"/></svg></button><button class="btn-action btn-maps" onclick="openMaps('44227 Dortmund')" title="Route in Google Maps">🗺</button></div></div>
+<div class="job-row" id="job-96164623f25a" data-rating=""><a href="https://www.arbeitsagentur.de/jobsuche/jobdetail/13644-306042-S" target="_blank" class="job-link"><span class="job-title">5) Engineer* (m/w/d) Embedded Software | C++, Linux, Zephyr</span><span class="job-meta"><span class="job-company">Smart Mechatronics</span><span class="job-loc">44137 Dortmund (39 km)</span><span class="job-date">07.05.</span></span></a><div class="job-actions"><button class="btn-rating btn-rating-favorite" onclick="setRating(this,'96164623f25a','favorite')" title="Sehr gut geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-favorite"/></svg></button><button class="btn-rating btn-rating-compromise" onclick="setRating(this,'96164623f25a','compromise')" title="Ok, mit Einschraenkungen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-compromise"/></svg></button><button class="btn-rating btn-rating-dismissed" onclick="setRating(this,'96164623f25a','dismissed')" title="Nicht geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-dismissed"/></svg></button><button class="btn-action btn-maps" onclick="openMaps('44137 Dortmund')" title="Route in Google Maps">🗺</button></div></div>
+<div class="job-row" id="job-18c3dbdb56e9" data-rating=""><a href="https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1002791978-S" target="_blank" class="job-link"><span class="job-title">6) *SB* Embedded Software Engineer Java Card (m/w/d)(544763)</span><span class="job-meta"><span class="job-company">Eviden Germany GmbH</span><span class="job-loc">45886 Gelsenkirchen (47 km)</span><span class="job-date">07.05.</span></span></a><div class="job-actions"><button class="btn-rating btn-rating-favorite" onclick="setRating(this,'18c3dbdb56e9','favorite')" title="Sehr gut geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-favorite"/></svg></button><button class="btn-rating btn-rating-compromise" onclick="setRating(this,'18c3dbdb56e9','compromise')" title="Ok, mit Einschraenkungen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-compromise"/></svg></button><button class="btn-rating btn-rating-dismissed" onclick="setRating(this,'18c3dbdb56e9','dismissed')" title="Nicht geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-dismissed"/></svg></button><button class="btn-action btn-maps" onclick="openMaps('45886 Gelsenkirchen')" title="Route in Google Maps">🗺</button></div></div>
+<div class="job-row" id="job-7c72874abf67" data-rating=""><a href="https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1002608102-S" target="_blank" class="job-link"><span class="job-title">7) Engineer* Embedded Software | C++, Linux, Zephyr</span><span class="job-meta"><span class="job-company">Smart Mechatronics (Dortmund) GmbH</span><span class="job-loc">44227 Dortmund (46 km)</span><span class="job-date">07.05.</span></span></a><div class="job-actions"><button class="btn-rating btn-rating-favorite" onclick="setRating(this,'7c72874abf67','favorite')" title="Sehr gut geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-favorite"/></svg></button><button class="btn-rating btn-rating-compromise" onclick="setRating(this,'7c72874abf67','compromise')" title="Ok, mit Einschraenkungen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-compromise"/></svg></button><button class="btn-rating btn-rating-dismissed" onclick="setRating(this,'7c72874abf67','dismissed')" title="Nicht geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-dismissed"/></svg></button><button class="btn-action btn-maps" onclick="openMaps('44227 Dortmund')" title="Route in Google Maps">🗺</button></div></div>
+<div class="job-row" id="job-fc71c3a325e7" data-rating=""><a href="https://www.arbeitsagentur.de/jobsuche/jobdetail/12287-JOB-821220-S" target="_blank" class="job-link"><span class="job-title">8) Embedded Softwareentwickler (m/w/d)</span><span class="job-meta"><span class="job-company">INOTEC Sicherheitstechnik GmbH</span><span class="job-loc">59469 Ense (50 km)</span><span class="job-date">07.05.</span></span></a><div class="job-actions"><button class="btn-rating btn-rating-favorite" onclick="setRating(this,'fc71c3a325e7','favorite')" title="Sehr gut geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-favorite"/></svg></button><button class="btn-rating btn-rating-compromise" onclick="setRating(this,'fc71c3a325e7','compromise')" title="Ok, mit Einschraenkungen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-compromise"/></svg></button><button class="btn-rating btn-rating-dismissed" onclick="setRating(this,'fc71c3a325e7','dismissed')" title="Nicht geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-dismissed"/></svg></button><button class="btn-action btn-maps" onclick="openMaps('59469 Ense')" title="Route in Google Maps">🗺</button></div></div>
+<div class="job-row" id="job-25c7ffbcd446" data-rating=""><a href="https://www.arbeitsagentur.de/jobsuche/jobdetail/12287-JOB-821222-S" target="_blank" class="job-link"><span class="job-title">9) Embedded Softwareentwickler Schwerpunkt: Ladetechnik (m/w...</span><span class="job-meta"><span class="job-company">INOTEC Sicherheitstechnik GmbH</span><span class="job-loc">59469 Ense (50 km)</span><span class="job-date">07.05.</span></span></a><div class="job-actions"><button class="btn-rating btn-rating-favorite" onclick="setRating(this,'25c7ffbcd446','favorite')" title="Sehr gut geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-favorite"/></svg></button><button class="btn-rating btn-rating-compromise" onclick="setRating(this,'25c7ffbcd446','compromise')" title="Ok, mit Einschraenkungen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-compromise"/></svg></button><button class="btn-rating btn-rating-dismissed" onclick="setRating(this,'25c7ffbcd446','dismissed')" title="Nicht geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-dismissed"/></svg></button><button class="btn-action btn-maps" onclick="openMaps('59469 Ense')" title="Route in Google Maps">🗺</button></div></div>
+<div class="job-row" id="job-e71064c5e7d9" data-rating=""><a href="https://www.arbeitsagentur.de/jobsuche/jobdetail/10001-1000273460-S" target="_blank" class="job-link"><span class="job-title">10) Embedded Softwareentwickler (m/w/d) elektronische Messgeräte</span><span class="job-meta"><span class="job-company">grey engineering GmbH</span><span class="job-loc">59439 Holzwickede (41 km)</span><span class="job-date">07.05.</span></span></a><div class="job-actions"><button class="btn-rating btn-rating-favorite" onclick="setRating(this,'e71064c5e7d9','favorite')" title="Sehr gut geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-favorite"/></svg></button><button class="btn-rating btn-rating-compromise" onclick="setRating(this,'e71064c5e7d9','compromise')" title="Ok, mit Einschraenkungen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-compromise"/></svg></button><button class="btn-rating btn-rating-dismissed" onclick="setRating(this,'e71064c5e7d9','dismissed')" title="Nicht geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-dismissed"/></svg></button><button class="btn-action btn-maps" onclick="openMaps('59439 Holzwickede')" title="Route in Google Maps">🗺</button></div></div>
+<div class="job-row" id="job-4b6b84e534e1" data-rating=""><a href="https://www.arbeitsagentur.de/jobsuche/jobdetail/10000-1205234328-S" target="_blank" class="job-link"><span class="job-title">11) Senior Softwareentwickler Embedded Systems / C/C++ (m/w/d)</span><span class="job-meta"><span class="job-company">FRIWO Gerätebau GmbH</span><span class="job-loc">48346 Ostbevern (32 km)</span><span class="job-date">07.05.</span></span></a><div class="job-actions"><button class="btn-rating btn-rating-favorite" onclick="setRating(this,'4b6b84e534e1','favorite')" title="Sehr gut geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-favorite"/></svg></button><button class="btn-rating btn-rating-compromise" onclick="setRating(this,'4b6b84e534e1','compromise')" title="Ok, mit Einschraenkungen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-compromise"/></svg></button><button class="btn-rating btn-rating-dismissed" onclick="setRating(this,'4b6b84e534e1','dismissed')" title="Nicht geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-dismissed"/></svg></button><button class="btn-action btn-maps" onclick="openMaps('48346 Ostbevern')" title="Route in Google Maps">🗺</button></div></div>
+<div class="job-row" id="job-b875b9b6a9ac" data-rating=""><a href="https://www.arbeitsagentur.de/jobsuche/jobdetail/16585-k26155.1013-S" target="_blank" class="job-link"><span class="job-title">12) C/C++ Softwareentwickler (m/w/d) Embedded Systems</span><span class="job-meta"><span class="job-company">Windhoff Software Services GmbH</span><span class="job-loc"> <span class="warn">kein Ort</span></span><span class="job-date">07.05.</span></span></a><div class="job-actions"><button class="btn-rating btn-rating-favorite" onclick="setRating(this,'b875b9b6a9ac','favorite')" title="Sehr gut geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-favorite"/></svg></button><button class="btn-rating btn-rating-compromise" onclick="setRating(this,'b875b9b6a9ac','compromise')" title="Ok, mit Einschraenkungen"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-compromise"/></svg></button><button class="btn-rating btn-rating-dismissed" onclick="setRating(this,'b875b9b6a9ac','dismissed')" title="Nicht geeignet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#rating-dismissed"/></svg></button></div></div></div>
+</div>
+<script>
+var API = 'http://10.14.0.2:8517';
+var HOME = 'Senden, 48308 Senden (Westfalen)';
+var PROFILE = 'embedded_software_senior';
+var OFFLINE = false;
+var LS_KEY = 'stellensuche-marks::' + PROFILE;
+var FILTER_KEY = 'stellensuche-filter::' + PROFILE;
+
+// ========== LocalStorage Rating-Modell (Ticket #79) ==========
+// Neue Struktur: drei Listen {favorites, compromises, dismissed}.
+// Alte Struktur ohne 'compromises' wird beim Laden toleriert.
+
+function _loadMarks() {
+  try {
+    var raw = localStorage.getItem(LS_KEY);
+    var parsed = raw ? JSON.parse(raw) : null;
+    if (!parsed) return {favorites: [], compromises: [], dismissed: []};
+    return {
+      favorites: parsed.favorites || [],
+      compromises: parsed.compromises || [],
+      dismissed: parsed.dismissed || []
+    };
+  } catch (e) {
+    return {favorites: [], compromises: [], dismissed: []};
+  }
+}
+
+function _saveMarks(marks) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(marks)); } catch (e) {}
+}
+
+function _recordRating(jobId, rating) {
+  // rating: 'favorite'|'compromise'|'dismissed'|null — exklusiv (Radio-Verhalten)
+  var marks = _loadMarks();
+  ['favorites', 'compromises', 'dismissed'].forEach(function(k) {
+    var i = marks[k].indexOf(jobId);
+    if (i >= 0) marks[k].splice(i, 1);
+  });
+  if (rating === 'favorite') marks.favorites.push(jobId);
+  else if (rating === 'compromise') marks.compromises.push(jobId);
+  else if (rating === 'dismissed') marks.dismissed.push(jobId);
+  _saveMarks(marks);
+  if (typeof _scheduleGistPush === 'function') _scheduleGistPush();
+}
+
+function apiCall(endpoint, body) {
+  return fetch(API + endpoint, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(body)
+  }).then(function(r) { return r.json(); }).catch(function() { OFFLINE = true; });
+}
+
+// ========== GitHub Gist Sync ==========
+var GIST_TOKEN_KEY = 'stellensuche-gh-token';
+var GIST_ID_KEY = 'stellensuche-gist-id::' + PROFILE;
+var GIST_FILENAME = 'stellensuche-marks-' + PROFILE + '.json';
+var _syncTimer = null;
+
+function _setSyncStatus(text, cls) {
+  var el = document.getElementById('sync-status');
+  if (!el) return;
+  el.textContent = text;
+  el.className = 'sync-status ' + (cls || '');
+}
+
+function _sanitizeToken(raw) {
+  if (raw === null || raw === undefined) throw new Error('Token fehlt');
+  var t = String(raw).trim();
+  if (!t) throw new Error('Token ist leer');
+  if (!/^[!-~]+$/.test(t)) {
+    throw new Error('Token enthaelt ungueltige Zeichen (Zeilenumbruch, Leerzeichen o.ae.). '
+      + 'Bitte Token neu einfuegen — am Stueck, ohne Umbrueche.');
+  }
+  return t;
+}
+
+function _ghHeaders(token) {
+  return {
+    'Authorization': 'token ' + _sanitizeToken(token),
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
+}
+
+async function _findOrCreateGist(token) {
+  var resp = await fetch('https://api.github.com/gists?per_page=100', {headers: _ghHeaders(token)});
+  if (!resp.ok) throw new Error('Gist-Liste fehlgeschlagen: ' + resp.status);
+  var gists = await resp.json();
+  for (var i = 0; i < gists.length; i++) {
+    if (gists[i].files && gists[i].files[GIST_FILENAME]) return gists[i].id;
+  }
+  var create = await fetch('https://api.github.com/gists', {
+    method: 'POST',
+    headers: _ghHeaders(token),
+    body: JSON.stringify({
+      description: 'Stellensuche-Markierungen Sync (' + PROFILE + ')',
+      public: false,
+      files: _filesPayload(_loadMarks())
+    })
+  });
+  if (!create.ok) throw new Error('Gist-Anlage fehlgeschlagen: ' + create.status);
+  var obj = await create.json();
+  return obj.id;
+}
+
+function _filesPayload(marks) {
+  var enriched = {
+    favorites: marks.favorites || [],
+    compromises: marks.compromises || [],
+    dismissed: marks.dismissed || [],
+    profile: PROFILE,
+    synced_at: new Date().toISOString()
+  };
+  var out = {};
+  out[GIST_FILENAME] = {content: JSON.stringify(enriched, null, 2)};
+  return out;
+}
+
+async function _patchGist(token, gistId, marks) {
+  var resp = await fetch('https://api.github.com/gists/' + gistId, {
+    method: 'PATCH',
+    headers: _ghHeaders(token),
+    body: JSON.stringify({files: _filesPayload(marks)})
+  });
+  if (!resp.ok) throw new Error('Gist-Update fehlgeschlagen: ' + resp.status);
+}
+
+async function _pullGist(token, gistId) {
+  var resp = await fetch('https://api.github.com/gists/' + gistId, {headers: _ghHeaders(token)});
+  if (!resp.ok) throw new Error('Gist-Lesen fehlgeschlagen: ' + resp.status);
+  var obj = await resp.json();
+  var file = obj.files && obj.files[GIST_FILENAME];
+  if (!file) return null;
+  try { return JSON.parse(file.content); } catch (e) { return null; }
+}
+
+function _loadStoredToken() {
+  var raw = localStorage.getItem(GIST_TOKEN_KEY);
+  if (!raw) return null;
+  try {
+    var clean = _sanitizeToken(raw);
+    if (clean !== raw) localStorage.setItem(GIST_TOKEN_KEY, clean);
+    return clean;
+  } catch (e) {
+    localStorage.removeItem(GIST_TOKEN_KEY);
+    return null;
+  }
+}
+
+function setupGistSync() {
+  var token = _loadStoredToken();
+  if (!token) {
+    var entered = prompt('GitHub Personal Access Token mit Scope "gist" eingeben:');
+    if (!entered) return;
+    try { token = _sanitizeToken(entered); }
+    catch (e) { _setSyncStatus('Sync-Fehler: ' + e.message, 'err'); return; }
+    localStorage.setItem(GIST_TOKEN_KEY, token);
+  }
+  _setSyncStatus('Sync wird eingerichtet...', 'busy');
+  _findOrCreateGist(token).then(function(gistId) {
+    localStorage.setItem(GIST_ID_KEY, gistId);
+    return _pullGist(token, gistId).then(function(remote) {
+      if (remote) _mergeRemoteMarks(remote);
+    }).then(function() { return _patchGist(token, gistId, _loadMarks()); });
+  }).then(function() {
+    _setSyncStatus('Sync aktiv', 'ok');
+  }).catch(function(err) {
+    _setSyncStatus('Sync-Fehler: ' + err.message, 'err');
+  });
+}
+
+function _mergeRemoteMarks(remote) {
+  var local = _loadMarks();
+  function union(a, b) {
+    var s = {};
+    (a || []).forEach(function(x) { s[x] = true; });
+    (b || []).forEach(function(x) { s[x] = true; });
+    return Object.keys(s);
+  }
+  local.favorites = union(local.favorites, remote.favorites);
+  local.compromises = union(local.compromises, remote.compromises);
+  local.dismissed = union(local.dismissed, remote.dismissed);
+  _saveMarks(local);
+  _applyLocalMarks();
+  applyFilter();
+}
+
+function _scheduleGistPush() {
+  var token = _loadStoredToken();
+  var gistId = localStorage.getItem(GIST_ID_KEY);
+  if (!token || !gistId) return;
+  if (_syncTimer) clearTimeout(_syncTimer);
+  _setSyncStatus('Sync laeuft...', 'busy');
+  _syncTimer = setTimeout(function() {
+    _patchGist(token, gistId, _loadMarks())
+      .then(function() { _setSyncStatus('Sync aktiv', 'ok'); })
+      .catch(function(err) { _setSyncStatus('Sync-Fehler: ' + err.message, 'err'); });
+  }, 1500);
+}
+
+function _initGistSync() {
+  var token = _loadStoredToken();
+  var gistId = localStorage.getItem(GIST_ID_KEY);
+  if (!token || !gistId) { _setSyncStatus('Sync nicht eingerichtet', ''); return; }
+  _setSyncStatus('Sync wird abgeglichen...', 'busy');
+  _pullGist(token, gistId).then(function(remote) {
+    if (remote) _mergeRemoteMarks(remote);
+    _setSyncStatus('Sync aktiv', 'ok');
+  }).catch(function(err) {
+    _setSyncStatus('Sync-Fehler: ' + err.message, 'err');
+  });
+}
+
+var _lastClick = {};
+function _debounce(key) {
+  var now = Date.now();
+  if (_lastClick[key] && now - _lastClick[key] < 400) return true;
+  _lastClick[key] = now;
+  return false;
+}
+
+function openMaps(destination) {
+  var url = 'https://www.google.com/maps/dir/' + encodeURIComponent(HOME) + '/' + encodeURIComponent(destination);
+  window.open(url, '_blank');
+}
+
+// ========== 3-Stufen-Rating: Button-Aktion ==========
+
+function setRating(btn, jobId, ratingKey) {
+  if (_debounce('rate-' + jobId)) return;
+  var row = btn.closest('.job-row');
+  if (!row) return;
+  var currentRating = row.dataset.rating || '';
+  var newRating = (currentRating === ratingKey) ? '' : ratingKey;
+  // Alle 3 Rating-Klassen entfernen, dann neue setzen
+  row.classList.remove('rating-favorite', 'rating-compromise', 'rating-dismissed');
+  if (newRating) row.classList.add('rating-' + newRating);
+  row.dataset.rating = newRating;
+  // Buttons umschalten
+  row.querySelectorAll('.btn-rating').forEach(function(b) { b.classList.remove('active'); });
+  if (newRating) {
+    var active = row.querySelector('.btn-rating-' + newRating);
+    if (active) active.classList.add('active');
+  }
+  _recordRating(jobId, newRating || null);
+  apiCall('/api/rating', {job_id: jobId, rating: newRating || null});
+  applyFilter();
+}
+
+// Legacy-Wrapper fuer evtl. noch verbliebene Aufrufer:
+function toggleFav(btn, jobId) {
+  var row = document.getElementById('job-' + jobId);
+  var rateBtn = row && row.querySelector('.btn-rating-favorite');
+  if (rateBtn) setRating(rateBtn, jobId, 'favorite');
+}
+function toggleDismiss(btn, jobId) {
+  var row = document.getElementById('job-' + jobId);
+  var rateBtn = row && row.querySelector('.btn-rating-dismissed');
+  if (rateBtn) setRating(rateBtn, jobId, 'dismissed');
+}
+
+// ========== Filter (4 Toggles, alle Default an, LocalStorage pro Profil) ==========
+
+function _loadFilterState() {
+  try {
+    var raw = localStorage.getItem(FILTER_KEY);
+    if (!raw) return {unmarked: true, favorite: true, compromise: true, dismissed: true};
+    var parsed = JSON.parse(raw);
+    return {
+      unmarked: parsed.unmarked !== false,
+      favorite: parsed.favorite !== false,
+      compromise: parsed.compromise !== false,
+      dismissed: parsed.dismissed !== false
+    };
+  } catch (e) {
+    return {unmarked: true, favorite: true, compromise: true, dismissed: true};
+  }
+}
+
+function _saveFilterState(state) {
+  try { localStorage.setItem(FILTER_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+function toggleFilter(kind) {
+  var state = _loadFilterState();
+  state[kind] = !state[kind];
+  _saveFilterState(state);
+  applyFilter();
+}
+
+function applyFilter() {
+  var state = _loadFilterState();
+  ['unmarked', 'favorite', 'compromise', 'dismissed'].forEach(function(k) {
+    var el = document.getElementById('tf-' + k);
+    if (el) el.classList.toggle('toggle-off', !state[k]);
+  });
+  var rows = document.querySelectorAll('.job-row');
+  var counts = {unmarked: 0, favorite: 0, compromise: 0, dismissed: 0};
+  rows.forEach(function(row) {
+    var rating = row.dataset.rating || '';
+    var key = rating || 'unmarked';
+    counts[key] = (counts[key] || 0) + 1;
+    var show = state[key];
+    row.classList.toggle('hidden', !show);
+  });
+  document.querySelectorAll('.source-group').forEach(function(group) {
+    var visible = group.querySelectorAll('.job-row:not(.hidden)').length;
+    group.classList.toggle('hidden', visible === 0);
+  });
+  // Button-Labels halten sich aus Count-Updates heraus (Icons + Titel-Attribut
+  // reichen); das erspart brittle String-Manipulation und macht das JS kleiner.
+}
+
+// ========== Rating-Zustand aus Server / LocalStorage anwenden ==========
+
+function _applyRatingToRow(id, rating) {
+  var row = document.getElementById('job-' + id);
+  if (!row) return;
+  row.classList.remove('rating-favorite', 'rating-compromise', 'rating-dismissed');
+  row.querySelectorAll('.btn-rating').forEach(function(b) { b.classList.remove('active'); });
+  if (rating) {
+    row.classList.add('rating-' + rating);
+    var btn = row.querySelector('.btn-rating-' + rating);
+    if (btn) btn.classList.add('active');
+  }
+  row.dataset.rating = rating || '';
+}
+
+function _applyLocalMarks() {
+  var marks = _loadMarks();
+  (marks.favorites || []).forEach(function(id) { _applyRatingToRow(id, 'favorite'); });
+  (marks.compromises || []).forEach(function(id) { _applyRatingToRow(id, 'compromise'); });
+  (marks.dismissed || []).forEach(function(id) { _applyRatingToRow(id, 'dismissed'); });
+}
+
+function loadStates() {
+  fetch(API + '/api/states')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      (data.favorite_ids || []).forEach(function(id) { _applyRatingToRow(id, 'favorite'); });
+      (data.compromise_ids || []).forEach(function(id) { _applyRatingToRow(id, 'compromise'); });
+      (data.dismissed_ids || []).forEach(function(id) { _applyRatingToRow(id, 'dismissed'); });
+      _applyLocalMarks();
+      applyFilter();
+    })
+    .catch(function() {
+      OFFLINE = true;
+      _applyLocalMarks();
+      applyFilter();
+    });
+}
+
+loadStates();
+applyFilter();
+_initGistSync();
+</script>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="rating-favorite" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 10v12"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H7a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L15 2h0a3.13 3.13 0 0 1 3 3.88Z"/></symbol>
+  <symbol id="rating-compromise" viewBox="0 0 24 24">
+    <g transform="rotate(90 12 12)"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 10v12"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H7a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L15 2h0a3.13 3.13 0 0 1 3 3.88Z"/></g>
+  </symbol>
+  <symbol id="rating-dismissed" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M17 14V2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H17a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2.76a2 2 0 0 0 -1.79 1.11L9 22h0a3.13 3.13 0 0 1-3-3.88Z"/></symbol>
+</svg>
+</body>
+</html>
